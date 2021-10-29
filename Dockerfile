@@ -86,7 +86,7 @@ WORKDIR /var/www/html
 
 #copy all configuration files
 # COPY docker/*.php /var/www/html/app/config/production/
-COPY docker/docker.env /var/www/html/.env
+COPY docker/configs/docker.env /var/www/html/.env
 
 RUN chown -R docker /var/www/html
 
@@ -106,7 +106,7 @@ RUN \
 ############## DEPENDENCIES via COMPOSER ###################
 
 #global install of composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.1 /usr/bin/composer /usr/bin/composer
 
 # Get dependencies
 USER docker
