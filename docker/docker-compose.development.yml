@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:1.20.1
+    container_name: snipeit_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./../:/usr/share/nginx/html:rw
+      - ./configs/nginx.conf:/etc/nginx/nginx.conf:ro
+    environment:
+      - NGINX_PORT=80
+    command: [nginx-debug, '-g', 'daemon off;']
+    depends_on:
+      - snipeit
+    networks:
+      snipeit-backend:
+        aliases:
+          - nginx
+
+  snipeit:
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile.developemnt
+    image: snipeit_development:v5
+    container_name: snipeit
+    volumes:
+      - ./../:/usr/share/nginx/html:rw
+      - ./configs/.env:/usr/share/nginx/html/.env:ro
+      - ./configs/php/php.ini-development:/usr/local/etc/php/php.ini:ro
+      - ./configs/php/xdebug.ini:/usr/local/etc/php/conf.d/php-ext-xdebug.ini:ro
+      - snipe_data:/var/lib/snipeit
+    networks:
+      snipeit-backend:
+        aliases:
+          - snipeit
+    depends_on:
+      - mariadb
+      - redis
+
+  mariadb:
+    image: mariadb:10.6.4-focal
+    volumes:
+      - snipe_mysql_db:/var/lib/mysql
+      - ./configs/mariadb.cnf:/etc/mysql/conf.d/custom-configs.cnf
+    env_file:
+      - ./configs/mariadb.env
+    ports:
+      - "3306:3306"
+    networks:
+      snipeit-backend:
+        aliases:
+          - mariadb
+
+  redis:
+    image: redis:6.2.5-buster
+    networks:
+      snipeit-backend:
+        aliases:
+          - redis
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    ports:
+      - "8025:8025"
+    networks:
+      snipeit-backend:
+        aliases:
+          - mailhog
+
+volumes:
+  db:
+  snipe_data:
+  snipe_mysql_db:
+
+networks:
+  snipeit-backend:
