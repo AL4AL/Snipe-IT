@@ -338,6 +338,17 @@
                   </div>
                   @endif
 
+                  <div class="row">
+                    <div class="col-md-3">
+                      <strong>
+                        {{ trans('admin/licenses/form.maintained') }}
+                      </strong>
+                    </div>
+                    <div class="col-md-9">
+                      {!! $license->maintained ? '<i class="fas fa-check text-success" aria-hidden="true"></i> '.trans('general.yes') : '<i class="fas fa-times text-danger" aria-hidden="true"></i> '.trans('general.no') !!}
+                    </div>
+                  </div>
+
                   @if (($license->seats) && ($license->seats) > 0)
                   <div class="row">
                     <div class="col-md-3">

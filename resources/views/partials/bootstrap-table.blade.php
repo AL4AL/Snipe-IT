@@ -64,14 +64,14 @@
                 return newParams;
             },
             formatLoadingMessage: function () {
-                return '<h2><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> Loading... please wait.... </h4>';
+                return '<h2><i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Loading... please wait.... </h4>';
             },
             icons: {
-                advancedSearchIcon: 'fa fa-search-plus',
+                advancedSearchIcon: 'fas fa-search-plus',
                 paginationSwitchDown: 'fa-caret-square-o-down',
                 paginationSwitchUp: 'fa-caret-square-o-up',
                 columns: 'fa-columns',
-                refresh: 'fa-refresh',
+                refresh: 'fas fa-sync-alt',
                 export: 'fa-download',
                 clearSearch: 'fa-times'
             },
@@ -84,7 +84,7 @@
                 $('[data-toggle="tooltip"]').tooltip(); // Needed to attach tooltips after ajax call
             }
 
-        });   
+        });
 
     });
 
@@ -109,7 +109,7 @@
     $('.snipe-table').on('uncheck.bs.table .btSelectItem', function (row, $element) {
         $( "#checkbox_" + $element.id).remove();
     });
-    
+
 
     // Handle whether or not the edit button should be disabled
     $('.snipe-table').on('uncheck.bs.table', function () {
@@ -232,11 +232,11 @@
             }
 
             if ((row.available_actions) && (row.available_actions.clone === true)) {
-                actions += '<a href="{{ url('/') }}/' + dest + '/' + row.id + '/clone" class="btn btn-sm btn-info" data-tooltip="true" title="Clone Item"><i class="fa fa-copy" aria-hidden="true"></i><span class="sr-only">Clone</span></a>&nbsp;';
+                actions += '<a href="{{ url('/') }}/' + dest + '/' + row.id + '/clone" class="btn btn-sm btn-info" data-tooltip="true" title="Clone Item"><i class="far fa-clone" aria-hidden="true"></i><span class="sr-only">Clone</span></a>&nbsp;';
             }
 
             if ((row.available_actions) && (row.available_actions.update === true)) {
-                actions += '<a href="{{ url('/') }}/' + dest + '/' + row.id + '/edit" class="btn btn-sm btn-warning" data-tooltip="true" title="{{ trans('general.update') }}"><i class="fa fa-pencil" aria-hidden="true"></i><span class="sr-only">{{ trans('general.update') }}</span></a>&nbsp;';
+                actions += '<a href="{{ url('/') }}/' + dest + '/' + row.id + '/edit" class="btn btn-sm btn-warning" data-tooltip="true" title="{{ trans('general.update') }}"><i class="fas fa-pencil-alt" aria-hidden="true"></i><span class="sr-only">{{ trans('general.update') }}</span></a>&nbsp;';
             }
 
             if ((row.available_actions) && (row.available_actions.delete === true)) {
@@ -245,16 +245,15 @@
                     + ' data-toggle="modal" '
                     + ' data-content="{{ trans('general.sure_to_delete') }} ' + row.name + '?" '
                     + ' data-title="{{  trans('general.delete') }}" onClick="return false;">'
-                    + '<i class="fa fa-trash" aria-hidden="true"></i><span class="sr-only">{{ trans('general.delete') }}</span></a>&nbsp;';
+                    + '<i class="fas fa-trash" aria-hidden="true"></i><span class="sr-only">Delete</span></a>&nbsp;';
             } else {
-                actions += '<a class="btn btn-danger btn-sm delete-asset disabled" onClick="return false;"><i class="fa fa-trash"></i></a>&nbsp;';
+                actions += '<a class="btn btn-danger btn-sm delete-asset disabled" onClick="return false;"><i class="fas fa-trash"></i></a>&nbsp;';
             }
-            
 
             if ((row.available_actions) && (row.available_actions.restore === true)) {
                 actions += '<form style="display: inline;" method="POST" action="{{ url('/') }}/' + dest + '/' + row.id + '/restore"> ';
                 actions += '@csrf';
-                actions += '<button class="btn btn-sm btn-warning" data-toggle="tooltip" title="{{ trans('general.restore') }}">';
+                actions += '<a href="{{ url('/') }}/' + dest + '/' + row.id + '/restore" class="btn btn-sm btn-warning" data-toggle="tooltip" title="{{ trans('general.restore') }}"><i class="far fa-clone"></i></a>&nbsp;';
                 actions += '<i class="fa fa-retweet" aria-hidden="true"></i><span class="sr-only">{{ trans('general.restore') }}</span></button></form>&nbsp;';
             }
 
@@ -275,28 +274,28 @@
 
             if (value.type == 'asset') {
                 item_destination = 'hardware';
-                item_icon = 'fa-barcode';
+                item_icon = 'fas fa-barcode';
             } else if (value.type == 'accessory') {
                 item_destination = 'accessories';
-                item_icon = 'fa-keyboard-o';
+                item_icon = 'far fa-keyboard';
             } else if (value.type == 'component') {
                 item_destination = 'components';
-                item_icon = 'fa-hdd-o';
+                item_icon = 'far fa-hdd';
             } else if (value.type == 'consumable') {
                 item_destination = 'consumables';
-                item_icon = 'fa-tint';
+                item_icon = 'fas fa-tint';
             } else if (value.type == 'license') {
                 item_destination = 'licenses';
-                item_icon = 'fa-floppy-o';
+                item_icon = 'far fa-save';
             } else if (value.type == 'user') {
                 item_destination = 'users';
-                item_icon = 'fa-user';
+                item_icon = 'fas fa-user';
             } else if (value.type == 'location') {
                 item_destination = 'locations'
-                item_icon = 'fa-map-marker';
+                item_icon = 'far fa-map-marker-alt';
             }
 
-            return '<nobr><a href="{{ url('/') }}/' + item_destination +'/' + value.id + '" data-tooltip="true" title="' + value.type + '"><i class="fa ' + item_icon + ' text-{{ $snipeSettings->skin!='' ? $snipeSettings->skin : 'blue' }} "></i> ' + value.name + '</a></nobr>';
+            return '<nobr><a href="{{ url('/') }}/' + item_destination +'/' + value.id + '" data-tooltip="true" title="' + value.type + '"><i class="' + item_icon + ' text-{{ $snipeSettings->skin!='' ? $snipeSettings->skin : 'blue' }} "></i> ' + value.name + '</a></nobr>';
 
         } else {
             return '';
@@ -364,7 +363,9 @@
 
     // This is only used by the requestable assets section
     function assetRequestActionsFormatter (row, value) {
-        if (value.available_actions.cancel == true)  {
+        if (value.assigned_to_self == true){
+            return '<button class="btn btn-danger btn-sm disabled" data-toggle="tooltip" title="Cancel this item request">{{ trans('button.cancel') }}</button>';
+        } else if (value.available_actions.cancel == true)  {
             return '<form action="{{ url('/') }}/account/request-asset/'+ value.id + '" method="GET"><button class="btn btn-danger btn-sm" data-toggle="tooltip" title="Cancel this item request">{{ trans('button.cancel') }}</button></form>';
         } else if (value.available_actions.request == true)  {
             return '<form action="{{ url('/') }}/account/request-asset/'+ value.id + '" method="GET"><button class="btn btn-primary btn-sm" data-toggle="tooltip" title="Request this item">{{ trans('button.request') }}</button></form>';
@@ -477,7 +478,7 @@
     function changeLogFormatter(value) {
         var result = '';
             for (var index in value) {
-                result += index + ': <del>' + value[index].old + '</del>  <i class="fa fa-long-arrow-right" aria-hidden="true"></i> ' + value[index].new + '<br>'
+                result += index + ': <del>' + value[index].old + '</del>  <i class="fas fa-long-arrow-alt-right" aria-hidden="true"></i> ' + value[index].new + '<br>'
             }
 
         return result;
@@ -530,9 +531,9 @@
 
     function trueFalseFormatter(value) {
         if ((value) && ((value == 'true') || (value == '1'))) {
-            return '<i class="fa fa-check text-success"></i>';
+            return '<i class="fas fa-check text-success"></i>';
         } else {
-            return '<i class="fa fa-times text-danger"></i>';
+            return '<i class="fas fa-times text-danger"></i>';
         }
     }
 
@@ -614,7 +615,7 @@
         if ((value) && (value.url) && (value.inlineable)) {
             return '<a href="' + value.url + '" data-toggle="lightbox" data-type="image"><img src="' + value.url + '" style="max-height: {{ $snipeSettings->thumbnail_max_h }}px; width: auto;" class="img-responsive"></a>';
         } else if ((value) && (value.url)) {
-            return '<a href="' + value.url + '" class="btn btn-default"><i class="fa fa-download"></i></a>';
+            return '<a href="' + value.url + '" class="btn btn-default"><i class="fas fa-download"></i></a>';
         }
     }
 

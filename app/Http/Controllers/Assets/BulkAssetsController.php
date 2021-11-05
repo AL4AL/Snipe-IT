@@ -32,7 +32,7 @@ class BulkAssetsController extends Controller
             return redirect()->back()->with('error', 'No assets selected');
         }
 
-        
+
         $asset_ids = array_values(array_unique($request->input('ids')));
 
         if ($request->filled('bulk_actions')) {
