@@ -1,5 +1,4 @@
 FROM php:7.4.25-fpm-bullseye
-LABEL maintainer="Sajjad Sohrabi <Kalantar98@Gmail.com>"
 RUN apt-get update && \
     apt-get install -y libldap2-dev \
     libzip-dev  \
@@ -10,8 +9,8 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install -j$(nproc) ldap \
     zip \
     bcmath \
-    gd
+    gd \
+    pdo_mysql
 
 RUN pecl install xdebug-3.0.4
-
 WORKDIR /usr/share/nginx/html/
