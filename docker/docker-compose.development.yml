@@ -44,11 +44,12 @@ services:
     container_name: snipeit_mariadb
     volumes:
       - snipe_mysql_db:/var/lib/mysql
-      - ./configs/mariadb.cnf:/etc/mysql/conf.d/custom-configs.cnf
+      - ./configs/mariadb/mariadb.cnf:/etc/mysql/conf.d/custom-configs.cnf
+      - ./configs/mariadb/ssl:/etc/mysql/ssl
     env_file:
-      - ./configs/mariadb.env
+      - configs/mariadb/mariadb.env
     ports:
-      - "3306:3306"
+      - "6868:3306"
     networks:
       snipeit-backend:
         aliases:
@@ -73,7 +74,6 @@ services:
           - mailhog
 
 volumes:
-  db:
   snipe_data:
   snipe_mysql_db:
 

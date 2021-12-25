@@ -1,48 +1,77 @@
-version: '3'
+version: '3.8'
 
 services:
+  nginx:
+    image: nginx:1.20.1
+    container_name: snipeit_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./../:/usr/share/nginx/html:rw
+      - ./configs/nginx.conf:/etc/nginx/nginx.conf:ro
+    environment:
+      - NGINX_PORT=80
+    depends_on:
+      - snipeit
+    networks:
+      snipeit-backend:
+        aliases:
+          - nginx
+
   snipeit:
     build:
-      context: .
-      dockerfile: Dockerfile.alpine
+      context: ./dockerfiles
+      dockerfile: Dockerfile
+    image: snipeit:v5
     container_name: snipeit
-    ports:
-    - "8000:80"
     volumes:
-    - ./logs:/var/www/html/storage/logs
-    depends_on:
-    - mariadb
-    - redis
-    env_file:
-    - .env.docker
+      - ./../:/usr/share/nginx/html:rw
+      - ./configs/.env:/usr/share/nginx/html/.env:ro
+      - ./configs/php/php.ini-production:/usr/local/etc/php/php.ini:ro
+      - snipe_data:/var/lib/snipeit
     networks:
-    - snipeit-backend
+      snipeit-backend:
+        aliases:
+          - snipeit
+    depends_on:
+      - mariadb
+      - redis
 
   mariadb:
     image: mariadb:10.6.4-focal
+    container_name: snipeit_mariadb
     volumes:
-    - db:/var/lib/mysql
+      - snipe_mysql_db:/var/lib/mysql
+      - ./configs/mariadb/mariadb.cnf:/etc/mysql/conf.d/custom-configs.cnf
+      - ./configs/mariadb/ssl:/etc/mysql/ssl
     env_file:
-    - .env.docker
+      - configs/mariadb/mariadb.env
     networks:
-    - snipeit-backend
+      snipeit-backend:
+        aliases:
+          - mariadb
 
   redis:
     image: redis:6.2.5-buster
+    container_name: snipeit_redis
     networks:
-    - snipeit-backend
+      snipeit-backend:
+        aliases:
+          - redis
 
   mailhog:
     image: mailhog/mailhog:v1.0.1
+    container_name: snipeit_mailhog
     ports:
-    # - 1025:1025
-    - "8025:8025"
+      - "8025:8025"
     networks:
-    - snipeit-backend
-
+      snipeit-backend:
+        aliases:
+          - mailhog
 
 volumes:
-  db: {}
+  snipe_data:
+  snipe_mysql_db:
 
 networks:
-  snipeit-backend: {}
+  snipeit-backend:

@@ -13,6 +13,4 @@ RUN docker-php-ext-install -j$(nproc) ldap \
     bcmath \
     gd \
     pdo_mysql
-
-RUN pecl install xdebug-3.0.4
 WORKDIR /usr/share/nginx/html/
